@@ -241,8 +241,10 @@ namespace AccurateDeskv5_DTTest
 
                 try
                 {
-                    appx = Application.Launch(process.StartInfo);
-                    pid = appx.ProcessId;
+                    //appx = Application.Launch(process.StartInfo);
+                    process.Start();
+                    pid =  process.Id;
+                    Log.Information($"Accurate for automation has a PID# =>> {process.Id}");
                     Thread.Sleep(35000);
                 }
                 catch (Exception ex)
@@ -255,17 +257,17 @@ namespace AccurateDeskv5_DTTest
                 window = automationUIA3.GetDesktop();
                 AutomationElement mainElement = null;
                 AutomationElement[] auEle = window.FindAllDescendants(cf.ByName("ACCURATE 5", FlaUI.Core.Definitions.PropertyConditionFlags.MatchSubstring));
-                if (auEle.Length > 0)
-                {
-                    // Get the process ID of MyUnElevatedProcess.exe
-                    string targetProcessName = "accurate";
-                    Process[] processes = Process.GetProcessesByName(targetProcessName);
-                    if (processes.Length > 0)
-                    {
-                        Process latestProcess = processes.OrderByDescending(p => p.StartTime).First();
-                        pid = latestProcess.Id;
-                    }
-                }
+                //if (auEle.Length > 0)
+                //{
+                //    // Get the process ID of MyUnElevatedProcess.exe
+                //    string targetProcessName = "accurate";
+                //    Process[] processes = Process.GetProcessesByName(targetProcessName);
+                //    if (processes.Length > 0)
+                //    {
+                //        Process latestProcess = processes.OrderByDescending(p => p.StartTime).First();
+                //        pid = latestProcess.Id;
+                //    }
+                //}
                 foreach (AutomationElement item in auEle)
                 {
                     if (item.Properties.ProcessId == pid)
