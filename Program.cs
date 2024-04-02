@@ -217,17 +217,40 @@ namespace AccurateDeskv5_DTTest
             var step = 0;
             try
             {
-                //appx = Application.Launch(@$"{appExe}");
-                //DesktopWindow = appx.GetMainWindow(automationUIA3);
-                //pid = appx.ProcessId;
 
-                ProcessStartInfo psi = new ProcessStartInfo();
-                psi.FileName = Environment.GetEnvironmentVariable("WINDIR") + "\\explorer.exe";
-                psi.Verb = "runasuser";
-                psi.LoadUserProfile = true;
-                psi.Arguments = @$"{erpappnamepath}";
-                Process p = Process.Start(psi);
-                Thread.Sleep(25000);
+                //ProcessStartInfo psi = new ProcessStartInfo();
+                //psi.FileName = Environment.GetEnvironmentVariable("WINDIR") + "\\explorer.exe";
+                //psi.Verb = "runasuser";
+                //psi.LoadUserProfile = true;
+                //psi.Arguments = @$"{erpappnamepath}";
+                //Process p = Process.Start(psi);
+                //Log.Information(p.ProcessName);
+                //Thread.Sleep(25000);
+
+                /* added on Tue 2 April 2024, by Iqbal, for anticipating standart user windows cannot see process name */
+                // Specify the path to your shortcut
+                string shortcutPath = $@"{erpappnamepath}";
+                ProcessStartInfo startInfo = new ProcessStartInfo();
+                startInfo.FileName = shortcutPath;
+                startInfo.UseShellExecute = true;
+                startInfo.CreateNoWindow = false;
+
+                Process process = new Process();
+                process.StartInfo = startInfo;
+                automationUIA3 = new UIA3Automation();
+
+                try
+                {
+                    appx = Application.Launch(process.StartInfo);
+                    pid = appx.ProcessId;
+                    Thread.Sleep(35000);
+                }
+                catch (Exception ex)
+                {
+                    Log.Information("Error =>" + ex.Message);
+                    Log.Information($"[OpenAppAndDBConfig] Error ketika menghandle opening ACCURATE (window) process..."); 
+                    return false; 
+                }
 
                 window = automationUIA3.GetDesktop();
                 AutomationElement mainElement = null;
@@ -235,7 +258,7 @@ namespace AccurateDeskv5_DTTest
                 if (auEle.Length > 0)
                 {
                     // Get the process ID of MyUnElevatedProcess.exe
-                    string targetProcessName = "Accurate";
+                    string targetProcessName = "accurate";
                     Process[] processes = Process.GetProcessesByName(targetProcessName);
                     if (processes.Length > 0)
                     {
@@ -254,7 +277,7 @@ namespace AccurateDeskv5_DTTest
                 step++;
                 if (mainElement is null)
                 {
-                    Log.Information($"[Step #{step}] Quitting, end of OpenAppAndDBConfig function !!");
+                    Log.Information($"[Step #{step}] Quitting, end of OpenAppAndDBConfig function (no PID found) !!");
                     return false;
                 }
                 Log.Information("Element Interaction on property named -> " + mainElement.Properties.Name.ToString());
