@@ -186,7 +186,7 @@ public struct mycUrl
     const string _prodToken = "2S0VtpYzETxDrL6WClmxXXnOcCkNbR5nUCCLak6EHmbPbSSsJiTFTPNZrXKk2S0VtpYzETxDrL6WClmx";
     const string _testToken = "KQtbMk32csiJvm8XDAx2KnRAdbtP3YVAnJpF8R5cb2bcBr8boT3dTvGc23c6fqk2NknbxpdarsdF3M4V";
 
-    private string _httpresponses;
+    private string? _httpresponses;
 
     private static string _token;
     private static string _urlAddress;

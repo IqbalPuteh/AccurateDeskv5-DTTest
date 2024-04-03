@@ -128,7 +128,8 @@ namespace AccurateDeskv5_DTTest
                     Log.Information("application automation failed when running app (OpenAppAndDBConfig) !!!");
                     return;
                 }
-                
+                automationUIA3 = new UIA3Automation();
+                window = automationUIA3.GetDesktop();
                 if (!LoginApp())
                 {
                     Console.Beep();
@@ -136,7 +137,8 @@ namespace AccurateDeskv5_DTTest
                     Log.Information("application automation failed when running app (LoginApp) !!!");
                     return;
                 }
-                
+                automationUIA3 = new UIA3Automation();
+                window = automationUIA3.GetDesktop();
                 if (!OpenReport("sales"))
                 {
                     Console.Beep();
@@ -144,13 +146,16 @@ namespace AccurateDeskv5_DTTest
                     Log.Information("application automation failed when running app (OpenReport -> Sales) !!!");
                     return;
                 }
-                if(!ClosingWorkspace())
+                automationUIA3 = new UIA3Automation();
+                window = automationUIA3.GetDesktop();
+                if (!ClosingWorkspace())
                 {
                     Console.Beep();
                     Task.Delay(500);
                     Log.Information("application automation failed when running app (ClosingWorkspace) !!!");
                     return;
                 }
+                window = automationUIA3.GetDesktop();
                 if (!OpenReport("ar"))
                 {
                     Console.Beep();
@@ -158,6 +163,7 @@ namespace AccurateDeskv5_DTTest
                     Log.Information("application automation failed when running app (OpenReport -> Sales) !!!");
                     return;
                 }
+                window = automationUIA3.GetDesktop();
                 if (!ClosingWorkspace())
                 {
                     Console.Beep();
@@ -165,6 +171,7 @@ namespace AccurateDeskv5_DTTest
                     Log.Information("application automation failed when running app (ClosingWorkspace) !!!");
                     return;
                 }
+                window = automationUIA3.GetDesktop();
                 if (!OpenReport("outlet"))
                 {
                     Console.Beep();
@@ -172,6 +179,7 @@ namespace AccurateDeskv5_DTTest
                     Log.Information("application automation failed when running app (OpenReport -> Sales) !!!");
                     return;
                 }
+                window = automationUIA3.GetDesktop();
                 if (!ClosingWorkspace())
                 {
                     Console.Beep();
@@ -179,6 +187,7 @@ namespace AccurateDeskv5_DTTest
                     Log.Information("application automation failed when running app (ClosingWorkspace) !!!");
                     return;
                 }
+                window = automationUIA3.GetDesktop();
                 if (!CloseApp())
                 {
                     Console.Beep();
@@ -245,7 +254,7 @@ namespace AccurateDeskv5_DTTest
                     process.Start();
                     pid =  process.Id;
                     Log.Information($"Accurate for automation has a PID# =>> {process.Id}");
-                    Thread.Sleep(35000);
+                    Thread.Sleep(15000);
                 }
                 catch (Exception ex)
                 {
@@ -502,7 +511,7 @@ namespace AccurateDeskv5_DTTest
                 step++;
                 if (ele is null)
                 {
-                    Log.Information($"[Step #{step}] Quitting, end of OpenReport function !!");
+                    Log.Information($"[Step #{step}] Quitting, end of LoginApp function !!");
                     return false;
                 }
                 Log.Information("Element Interaction on property named -> " + ele.Properties.Name.ToString());
@@ -517,7 +526,7 @@ namespace AccurateDeskv5_DTTest
                 ele.FindFirstDescendant(cf => cf.ByName("OK")).AsButton().Click();
                 Log.Information("Clicking 'OK' button...");
                 Log.Information("Now wait for 1 minute before clicking report...");
-                Thread.Sleep(55000);
+                Thread.Sleep(15000);
                 return true;
             }
             catch (Exception ex)
@@ -534,7 +543,9 @@ namespace AccurateDeskv5_DTTest
             try
             {
                 AutomationElement mainElement = null;
-                AutomationElement[] auEle = window.FindAllChildren(cf.ByName("ACCURATE 5", FlaUI.Core.Definitions.PropertyConditionFlags.MatchSubstring));
+                //AutomationElement[] auEle = window.FindAllChildren(cf.ByName("ACCURATE 5", FlaUI.Core.Definitions.PropertyConditionFlags.MatchSubstring));
+                // TfrmMain
+                AutomationElement[] auEle = window.FindAllChildren(cf.ByClassName("TfrmMain"));
                 foreach (AutomationElement item in auEle)
                 {
                     if (item.Properties.ProcessId == pid)
@@ -957,9 +968,9 @@ namespace AccurateDeskv5_DTTest
         private static bool SavingFileDialog(string reportName)
         {
             var step = 0; 
-            Thread.Sleep(2000);
+            Thread.Sleep(5000);
             AutomationElement mainEle = null;
-            AutomationElement[] auEle = window.FindAllChildren(cr => cr.ByName("Save As"));
+            AutomationElement[] auEle = window.FindAllChildren(cr => cr.ByName("Simpan Sebagai"));
             foreach (AutomationElement item in auEle)
             {
                 if (item.Properties.ProcessId == pid)
@@ -978,7 +989,7 @@ namespace AccurateDeskv5_DTTest
             Thread.Sleep(500);
 
             AutomationElement ele1 = null;
-            AutomationElement[] auEle1 = mainEle.FindAllDescendants(cr => cr.ByName("File name:", FlaUI.Core.Definitions.PropertyConditionFlags.MatchSubstring));
+            AutomationElement[] auEle1 = mainEle.FindAllDescendants(cr => cr.ByName("Nama File:", FlaUI.Core.Definitions.PropertyConditionFlags.MatchSubstring));
             foreach (AutomationElement item in auEle1)
             {
                 if (item.Properties.ControlType.ToString() == "Edit")
