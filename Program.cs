@@ -39,6 +39,7 @@ namespace AccurateDeskv5_DTTest
         static string dbaliasname = ConfigurationManager.AppSettings["dbaliasname"];
         static string dbpath = ConfigurationManager.AppSettings["dbpath"];
         static string yPosWelcome = ConfigurationManager.AppSettings["yPosWelcome"];
+        static string winLang = ConfigurationManager.AppSettings["windowslanguageIDorEN"];
         static string logfilename = "";
         static int pid = 0;
 
@@ -318,7 +319,11 @@ namespace AccurateDeskv5_DTTest
                 selamatWindowEle = null;
                 Log.Information($"Action -> Closing 'Welcome to Accurate' window at {(cordX)},{(cordY)}.");
                 Thread.Sleep(1500);
+#if DEBUG
+                BlockInput(false);
+#else
                 BlockInput(true);
+#endif
 
                 //Logic to handle failed to close 'Selamat data window'
                 auEle1 = window.FindAllChildren(cf.ByName("Selamat Datang", FlaUI.Core.Definitions.PropertyConditionFlags.MatchSubstring));
@@ -544,16 +549,22 @@ namespace AccurateDeskv5_DTTest
             {
                 AutomationElement mainElement = null;
                 //AutomationElement[] auEle = window.FindAllChildren(cf.ByName("ACCURATE 5", FlaUI.Core.Definitions.PropertyConditionFlags.MatchSubstring));
-                // TfrmMain
-                AutomationElement[] auEle = window.FindAllChildren(cf.ByClassName("TfrmMain"));
-                foreach (AutomationElement item in auEle)
+                //foreach (AutomationElement item in auEle)
+                //{
+                //    if (item.Properties.ProcessId == pid)
+                //    {
+                //        mainElement = item;
+                //        break;
+                //    }
+                //}
+
+                AutomationElement auEle1;
+                do
                 {
-                    if (item.Properties.ProcessId == pid)
-                    {
-                        mainElement = item;
-                        break;
-                    }
-                }
+                    // TfrmMain
+                    auEle1 = window.FindFirstChild(cf.ByClassName("TfrmMain"));
+                } while (auEle1.Properties.ProcessId != pid);
+                mainElement = auEle1;
                 step += 1;
                 if (mainElement is null)
                 {
@@ -698,8 +709,9 @@ namespace AccurateDeskv5_DTTest
                 Thread.Sleep(10000);
 
                 // Opening Report Format Window
+                window = automationUIA3.GetDesktop();
                 AutomationElement reportFormatElement = null;
-                auEle = window.FindAllChildren(cr => cr.ByName("Report Format"));
+                AutomationElement[] auEle = window.FindAllChildren(cr => cr.ByName("Report Format"));
                 foreach (AutomationElement item in auEle)
                 {
                     if (item.Properties.ProcessId == pid)
@@ -967,10 +979,13 @@ namespace AccurateDeskv5_DTTest
 
         private static bool SavingFileDialog(string reportName)
         {
+            var searchString = "";
             var step = 0; 
             Thread.Sleep(5000);
             AutomationElement mainEle = null;
-            AutomationElement[] auEle = window.FindAllChildren(cr => cr.ByName("Simpan Sebagai"));
+            //Lang:ID 'Save As' change to 'Simpan Sebagai'
+            if (winLang == "ID") { searchString = "Simpan Sebagai"; } else { searchString = "Save As"; }
+            AutomationElement[] auEle = window.FindAllChildren(cr => cr.ByName(searchString));
             foreach (AutomationElement item in auEle)
             {
                 if (item.Properties.ProcessId == pid)
@@ -989,7 +1004,9 @@ namespace AccurateDeskv5_DTTest
             Thread.Sleep(500);
 
             AutomationElement ele1 = null;
-            AutomationElement[] auEle1 = mainEle.FindAllDescendants(cr => cr.ByName("Nama File:", FlaUI.Core.Definitions.PropertyConditionFlags.MatchSubstring));
+            //Lang:ID 'File Name:' change to 'Nama file:'
+            if (winLang == "ID") { searchString = "Nama file:"; } else { searchString = "File Name:"; }
+            AutomationElement[] auEle1 = mainEle.FindAllDescendants(cr => cr.ByName(searchString, FlaUI.Core.Definitions.PropertyConditionFlags.MatchSubstring));
             foreach (AutomationElement item in auEle1)
             {
                 if (item.Properties.ControlType.ToString() == "Edit")
@@ -1039,7 +1056,10 @@ namespace AccurateDeskv5_DTTest
 
             //Save
             AutomationElement ele2 = null;
-            ele2 = mainEle.FindFirstChild(cf.ByName("Save"));
+            //ele2 = mainEle.FindFirstChild(cf.ByName("Save"));
+            // Lang:ID, button 'Save' named as Simpan
+            if (winLang == "ID") { searchString = "Simpan"; } else { searchString = "Save"; }
+            ele2 = mainEle.FindFirstChild(cf.ByName(searchString));
             step = +1;
             if (ele2 is null)
             {
@@ -1048,7 +1068,7 @@ namespace AccurateDeskv5_DTTest
             }
             Log.Information("Element Interaction on property named -> " + ele2.Properties.Name.ToString());
             ele2.AsButton().Click();
-            //* Pause the app to wait file saving is finnished //
+            //* Pause the app to wait file saving is finished *//
             DateTime startTime = DateTime.Now;
             Thread.Sleep(1000);
             while (DateTime.Now - startTime < TimeSpan.FromMinutes(3))
@@ -1107,8 +1127,10 @@ namespace AccurateDeskv5_DTTest
                 ele.Focus();
                 Thread.Sleep(2000);
 
+                var searchString = "";
+                if (winLang == "ID") { searchString = "Jendela"; } else { searchString = "Windows"; }
                 //ele = WaitForElement(() => ele.FindFirstDescendant(cr => cr.ByName("Windows")));
-                ele = WaitForElement(() => ele.FindFirstDescendant(cr => cr.ByName("Jendela")));
+                ele = WaitForElement(() => ele.FindFirstDescendant(cr => cr.ByName(searchString)));
                 step++; 
                 if (ele is null)
                 {
