@@ -711,15 +711,16 @@ namespace AccurateDeskv5_DTTest
                 // Opening Report Format Window
                 window = automationUIA3.GetDesktop();
                 AutomationElement reportFormatElement = null;
-                AutomationElement[] auEle = window.FindAllChildren(cr => cr.ByName("Report Format"));
-                foreach (AutomationElement item in auEle)
-                {
-                    if (item.Properties.ProcessId == pid)
-                    {
-                        reportFormatElement = item;
-                        break;
-                    }
-                }
+                AutomationElement auEle = window.FindFirstChild( cr => cr.ByName("Report Format"));
+                //foreach (AutomationElement item in auEle)
+                //{
+                //    if (item.Properties.ProcessId == pid)
+                //    {
+                //        reportFormatElement = item;
+                //        break;
+                //    }
+                //}
+                reportFormatElement = auEle;
                 step += 1;
                 if (reportFormatElement is null)
                 {
@@ -790,7 +791,7 @@ namespace AccurateDeskv5_DTTest
                 step += 1; 
                 if (tabDateFromToElement == null)
                 {
-                    Log.Information($"[Step #{step}] Quitting, end of OpenReport function !!");
+                    Log.Information($"[Step #{step}] Quitting, end of OpenReport fun ction !!");
                     return false;
                 }
                 Log.Information("Element Interaction on property named -> " + tabDateFromToElement.Properties.Name.ToString());
@@ -884,18 +885,19 @@ namespace AccurateDeskv5_DTTest
             var step = 0;
             try
             {
+                window = automationUIA3.GetDesktop();
                 /// Start downloading report process 
                 /// Travesing back to accurate desktop main windows 
                 AutomationElement ele1 = null;
-                AutomationElement[] auEle = window.FindAllChildren(cf.ByName("ACCURATE 5", FlaUI.Core.Definitions.PropertyConditionFlags.MatchSubstring));
-                foreach (AutomationElement item in auEle)
-                {
-                    if (item.Properties.ProcessId == pid)
-                    {
-                        ele1 = item;
-                        break;
-                    }
-                }
+                AutomationElement auEle = window.FindFirstChild(cf.ByName("ACCURATE 5", FlaUI.Core.Definitions.PropertyConditionFlags.MatchSubstring));
+                //foreach (AutomationElement item in auEle)
+                //{
+                //    if (item.Properties.ProcessId == pid)
+                //    {
+                        ele1 = auEle;
+                //        break;
+                //    }
+                //}
                 step = +1;
                 if (ele1 is null)
                 {
@@ -920,15 +922,15 @@ namespace AccurateDeskv5_DTTest
                 Thread.Sleep(1000);
 
                 /// The export button action resulting new window opened 
-                auEle = window.FindAllChildren(cf => cf.ByName("Export to Excel"));
-                foreach (AutomationElement item in auEle)
-                {
-                    if (item.Properties.ProcessId == pid)
-                    {
-                        ele1 = item;
-                        break;
-                    }
-                }
+                auEle = window.FindFirstChild(cf => cf.ByName("Export to Excel"));
+                //foreach (AutomationElement item in auEle)
+                //{
+                //    if (item.Properties.ProcessId == pid)
+                //    {
+                        ele1 = auEle;
+                //        break;
+                //    }
+                //}
                 step = +1;
                 if (ele1 is null)
                 {
